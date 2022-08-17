@@ -6,8 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 
 internal class ChatCreationTest {
 
@@ -19,7 +18,7 @@ internal class ChatCreationTest {
     @DisplayName("Create chat")
     fun createChat() {
         val chat = Chat(Chat.Id())
-        Mockito.`when`(chatCreation.createChat(chat)).thenReturn(chat)
+        `when`(chatCreation.createChat(chat)).thenReturn(chat)
 
         val createdChat = chatCreation.createChat(chat)
 
