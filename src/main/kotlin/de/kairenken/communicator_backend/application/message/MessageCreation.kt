@@ -18,7 +18,7 @@ class MessageCreation(
     }
 
     private fun validateMessage(message: Message) {
-        if (!messageChatRefRepository.chatExists(messageChatRefId = message.chatRefId)) {
+        if (!messageChatRefRepository.chatExists(message.chatRefId)) {
             throw IllegalArgumentException("Chat does not exist")
         }
     }

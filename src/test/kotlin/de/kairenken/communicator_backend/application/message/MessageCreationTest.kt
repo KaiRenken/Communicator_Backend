@@ -5,10 +5,8 @@ import de.kairenken.communicator_backend.domain.message.MessageChatRefRepository
 import de.kairenken.communicator_backend.domain.message.MessageRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import java.util.*
 
@@ -28,7 +26,7 @@ internal class MessageCreationTest {
             Message.Content("test-message")
         )
 
-        `when`(messageChatRefRepository.chatExists(messageChatRefId = message.chatRefId))
+        `when`(messageChatRefRepository.chatExists(message.chatRefId))
             .thenReturn(true)
         `when`(messageRepository.storeMessage(message))
             .thenReturn(message)
@@ -37,7 +35,7 @@ internal class MessageCreationTest {
 
         assertThat(createdMessage).isEqualTo(message)
         verify(messageRepository).storeMessage(message)
-        verify(messageChatRefRepository).chatExists(messageChatRefId = message.chatRefId)
+        verify(messageChatRefRepository).chatExists(message.chatRefId)
     }
 
     @Test
