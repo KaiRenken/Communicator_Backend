@@ -10,11 +10,11 @@ import java.util.*
 internal class MessageTest {
 
     @Test
-    @DisplayName("Create Message")
-    fun createMessage() {
-        val message = Message(Message.Id(), Message.Content("test-content"))
+    @DisplayName("Create Message.Id")
+    fun createMessageId() {
+        val messageId = Message.Id()
 
-        assertThat(message.id.value).isInstanceOf(UUID::class.java)
+        assertThat(messageId.value).isInstanceOf(UUID::class.java)
     }
 
     @Test
