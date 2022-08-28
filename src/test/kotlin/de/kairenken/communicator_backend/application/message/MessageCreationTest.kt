@@ -21,9 +21,8 @@ internal class MessageCreationTest {
     @DisplayName("Create message successfully")
     fun createMessage() {
         val message = Message(
-            Message.Id(),
-            Message.ChatRefId(UUID.randomUUID()),
-            Message.Content("test-message")
+            chatRefId = Message.ChatRefId(UUID.randomUUID()),
+            content = Message.Content("test-message")
         )
 
         `when`(messageChatRefRepository.chatExists(message.chatRefId))

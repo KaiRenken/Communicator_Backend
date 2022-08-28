@@ -12,12 +12,12 @@ class MessageCreation(
 ) {
 
     fun createMessage(message: Message): Message {
-        validateMessage(message)
+        checkIfChatExists(message)
 
         return messageRepository.storeMessage(message)
     }
 
-    private fun validateMessage(message: Message) {
+    private fun checkIfChatExists(message: Message) {
         if (!messageChatRefRepository.chatExists(message.chatRefId)) {
             throw IllegalArgumentException("Chat does not exist")
         }

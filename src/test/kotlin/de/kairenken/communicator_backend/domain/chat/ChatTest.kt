@@ -10,8 +10,15 @@ import java.util.UUID
 internal class ChatTest {
 
     @Test
-    @DisplayName("Create Chat.Id")
-    fun createChatId() {
+    fun `create chat without parameters`() {
+        val chat = Chat()
+
+        assertThat(chat.id.value).isInstanceOf(UUID::class.java)
+        assertThat(chat.messageIds).isEmpty()
+    }
+
+    @Test
+    fun `create chat id`() {
         val chatId = Chat.Id()
 
         assertThat(chatId.value).isInstanceOf(UUID::class.java)

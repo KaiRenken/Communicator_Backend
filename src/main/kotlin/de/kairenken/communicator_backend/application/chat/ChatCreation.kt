@@ -5,7 +5,7 @@ import de.kairenken.communicator_backend.domain.chat.ChatRepository
 import org.springframework.stereotype.Service
 
 @Service
-class ChatCreation(private val chatRepository: ChatRepository) {
+class ChatCreation(val chatRepository: ChatRepository) {
 
-    fun createChat(chat: Chat): Chat = chatRepository.storeChat(chat)
+    fun createChat(): Chat = chatRepository.storeChat(Chat())
 }
