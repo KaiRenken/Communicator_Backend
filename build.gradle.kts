@@ -22,7 +22,12 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.mockk:mockk:1.12.4")
     implementation("com.ninja-squad:springmockk:3.1.1")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.postgresql:postgresql")
+    implementation("org.flywaydb:flyway-core:8.5.13")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.testcontainers:testcontainers:1.17.3")
+    testImplementation("org.testcontainers:postgresql:1.17.3")
 }
 
 tasks.withType<KotlinCompile> {
