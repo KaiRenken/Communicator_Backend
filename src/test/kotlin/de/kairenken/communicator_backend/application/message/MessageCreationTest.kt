@@ -29,7 +29,9 @@ internal class MessageCreationTest {
         assertThat(createdMessage).isInstanceOf(MessageCreated::class.java)
         verify { messageRepository.storeMessage(any()) }
         verify { messageChatRefRepository.chatExists(any()) }
-        TODO("Check results content")
+        val messageCreated = createdMessage as MessageCreated
+        assertThat(messageCreated.message.chatRefId.value).isEqualTo(messageCreationDto.chatRefId)
+        assertThat(messageCreated.message.content.value).isEqualTo(messageCreationDto.content)
     }
 
     @Test
@@ -40,6 +42,7 @@ internal class MessageCreationTest {
         val result = messageCreation.createMessage(messageCreationDto)
 
         assertThat(result).isInstanceOf(ChatNotFound::class.java)
-        TODO("Check results content")
+        val chatNotFound = result as ChatNotFound
+        assertThat(chatNotFound.chatRefId.value).isEqualTo(messageCreationDto.chatRefId)
     }
 }
