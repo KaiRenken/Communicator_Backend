@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class MessageCreation(
-    val messageChatRefRepository: MessageChatRefRepository,
-    val messageRepository: MessageRepository
+    private val messageChatRefRepository: MessageChatRefRepository,
+    private val messageRepository: MessageRepository
 ) {
 
     fun createMessage(messageCreationDto: MessageCreationDto) = messageCreationDto

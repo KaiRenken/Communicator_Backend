@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/chat")
-class ChatRestController(val chatCreation: ChatCreation) {
+class ChatRestController(private val chatCreation: ChatCreation) {
 
     @PostMapping
     fun createChat(): ResponseEntity<ReadChatDto> {

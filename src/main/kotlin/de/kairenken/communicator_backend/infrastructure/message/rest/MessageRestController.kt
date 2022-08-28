@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/message")
-class MessageRestController(val messageCreation: MessageCreation) {
+class MessageRestController(private val messageCreation: MessageCreation) {
 
     @PostMapping
     fun createMessage(@RequestBody createMessageDto: CreateMessageDto) = createMessageDto
