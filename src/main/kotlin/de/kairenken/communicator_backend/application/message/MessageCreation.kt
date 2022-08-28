@@ -12,11 +12,9 @@ class MessageCreation(
     val messageRepository: MessageRepository
 ) {
 
-    fun createMessage(messageCreationDto: MessageCreationDto): Result {
-        return messageCreationDto
-            .validateAndCreateMessage()
-            .storeMessage()
-    }
+    fun createMessage(messageCreationDto: MessageCreationDto) = messageCreationDto
+        .validateAndCreateMessage()
+        .storeMessage()
 
     private fun MessageCreationDto.validateAndCreateMessage(): Result {
         val chatRefId = Message.ChatRefId(this.chatRefId)
