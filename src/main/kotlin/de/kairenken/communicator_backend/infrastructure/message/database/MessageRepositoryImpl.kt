@@ -10,8 +10,7 @@ class MessageRepositoryImpl : MessageRepository {
 
     private val messageStore = mutableMapOf<UUID, Message>()
 
-    override fun storeMessage(message: Message): Message {
+    override fun storeMessage(message: Message) {
         messageStore.put(message.id.value, message)
-        return message
     }
 }

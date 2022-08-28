@@ -10,24 +10,21 @@ import java.util.*
 internal class MessageTest {
 
     @Test
-    @DisplayName("Create Message.Id")
-    fun createMessageId() {
+    fun `create message id`() {
         val messageId = Message.Id()
 
         assertThat(messageId.value).isInstanceOf(UUID::class.java)
     }
 
     @Test
-    @DisplayName("Create empty Message.Content")
-    fun createMessageContentWithEmptyContent() {
+    fun `create message content with empty content`() {
         assertThatThrownBy { Message.Content("") }
             .isExactlyInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
-    @DisplayName("Create blank Message.Content")
-    fun createMessageContentWithBlankContent() {
-        assertThatThrownBy { Message.Content(" ") }
+    fun `create message content with blank content`() {
+        assertThatThrownBy { Message.Content("     ") }
             .isExactlyInstanceOf(IllegalArgumentException::class.java)
     }
 }

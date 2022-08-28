@@ -1,56 +1,45 @@
 package de.kairenken.communicator_backend.application.message
 
-import de.kairenken.communicator_backend.domain.message.Message
 import de.kairenken.communicator_backend.domain.message.MessageChatRefRepository
 import de.kairenken.communicator_backend.domain.message.MessageRepository
+import de.kairenken.communicator_backend.domain.message.dto.MessageCreationDto
+import io.mockk.every
+import io.mockk.justRun
+import io.mockk.mockk
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.*
 import java.util.*
 
 internal class MessageCreationTest {
 
-    private val messageRepository = mock(MessageRepository::class.java)
-    private val messageChatRefRepository = mock(MessageChatRefRepository::class.java)
+    private val messageRepository = mockk<MessageRepository>()
+    private val messageChatRefRepository = mockk<MessageChatRefRepository>()
 
     private val messageCreation = MessageCreation(messageChatRefRepository, messageRepository)
 
     @Test
-    @DisplayName("Create message successfully")
-    fun createMessage() {
-        val message = Message(
-            chatRefId = Message.ChatRefId(UUID.randomUUID()),
-            content = Message.Content("test-message")
-        )
+    fun `create message successfully`() {
+        val messageCreationDto = MessageCreationDto(UUID.randomUUID(), "test-message")
+        every { messageChatRefRepository.chatExists(any()) } returns true
+        justRun { messageRepository.storeMessage(any()) }
 
-        `when`(messageChatRefRepository.chatExists(message.chatRefId))
-            .thenReturn(true)
-        `when`(messageRepository.storeMessage(message))
-            .thenReturn(message)
+        val createdMessage = messageCreation.createMessage(messageCreationDto)
 
-        val createdMessage = messageCreation.createMessage(message)
-
-        assertThat(createdMessage).isEqualTo(message)
-        verify(messageRepository).storeMessage(message)
-        verify(messageChatRefRepository).chatExists(message.chatRefId)
+        assertThat(createdMessage).isInstanceOf(MessageCreated::class.java)
+        verify { messageRepository.storeMessage(any()) }
+        verify { messageChatRefRepository.chatExists(any()) }
+        TODO("Check results content")
     }
 
     @Test
-    @DisplayName("Create message to non-existing chat")
-    fun createMessageToNonExistingChat() {
-        val message = Message(
-            Message.Id(),
-            Message.ChatRefId(UUID.randomUUID()),
-            Message.Content("test-message")
-        )
+    fun `create message to non existing chat`() {
+        val messageCreationDto = MessageCreationDto(UUID.randomUUID(), "test-message")
+        every { messageChatRefRepository.chatExists(any()) } returns false
 
-        `when`(messageChatRefRepository.chatExists(messageChatRefId = message.chatRefId))
-            .thenReturn(false)
+        val result = messageCreation.createMessage(messageCreationDto)
 
-        assertThatThrownBy { messageCreation.createMessage(message) }
-            .isInstanceOf(IllegalArgumentException::class.java)
-            .hasMessage("Chat does not exist")
+        assertThat(result).isInstanceOf(ChatNotFound::class.java)
+        TODO("Check results content")
     }
 }
