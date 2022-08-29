@@ -10,7 +10,106 @@ Content-Type: application/json
 > {%
     client.test("Request executed successfully", function() {
         client.assert(response.status === 201, "Response status is not 201");
+        client.assert(response.body.content === "test-content", "Content is not 'test-content'");
     });
 
     client.global.set("message-id", response.body.id)
+%}
+
+### create new message with non existing chat
+POST http://localhost:8080/api/message/72ce5283-f2f4-4df9-ad71-25d709f0f3d0
+Accept: application/json
+Content-Type: application/json
+
+{
+  "content": "test-content"
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 404, "Response status is not 404");
+        client.assert(response.body.code === "1", "Code is not 1");
+        client.assert(response.body.message === "Chat with id '72ce5283-f2f4-4df9-ad71-25d709f0f3d0' not found", "Message is not 'Chat with id '72ce5283-f2f4-4df9-ad71-25d709f0f3d0' not found'");
+    });
+%}
+
+### create new message with blank content
+POST http://localhost:8080/api/message/{{chat-id}}
+Accept: application/json
+Content-Type: application/json
+
+{
+  "content": " "
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.code === "2", "Code is not 2");
+        client.assert(response.body.message === "Message.Content is blank", "Message is not 'Message.Content is blank'");
+    });
+%}
+
+### create new message with missing body
+POST http://localhost:8080/api/message/{{chat-id}}
+Accept: application/json
+Content-Type: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.code === "2", "Code is not 2");
+        client.assert(response.body.message === "Invalid JSON", "Message is not 'Invalid JSON'");
+    });
+%}
+
+### create new message with content missing in body
+POST http://localhost:8080/api/message/{{chat-id}}
+Accept: application/json
+Content-Type: application/json
+
+{
+  "someOtherKey": "someOtherValue"
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.code === "2", "Code is not 2");
+        client.assert(response.body.message === "Message.Content is missing", "Message is not 'Message.Content is missing'");
+    });
+%}
+
+### create new message with invalid chat id
+POST http://localhost:8080/api/message/invalidChatId
+Accept: application/json
+Content-Type: application/json
+
+{
+  "content": "test-content"
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.code === "2", "Code is not 2");
+        client.assert(response.body.message === "Invalid Chat.Id", "Message is not 'Invalid Chat.Id'");
+    });
+%}
+
+### create new message with missing chat id
+POST http://localhost:8080/api/message/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "content": "test-content"
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.code === "2", "Code is not 2");
+        client.assert(response.body.message === "Chat.Id missing", "Message is not 'Chat.Id missing'");
+    });
 %}

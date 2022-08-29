@@ -10,7 +10,7 @@ class Message(val id: Id = Id(), val chatRefId: ChatRefId, val content: Content)
 
     class Content(val value: String) {
         init {
-            require(value.isNotBlank())
+            require(value.isNotBlank()) { "Message.Content is blank" }
         }
     }
 }

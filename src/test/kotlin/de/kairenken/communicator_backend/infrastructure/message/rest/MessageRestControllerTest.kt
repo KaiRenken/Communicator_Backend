@@ -62,7 +62,8 @@ internal class MessageRestControllerTest {
         )
         val expectedResponse = """
             {
-            "error": "Chat with id '${message.chatRefId.value}' not found"
+            "code": "1",
+            "message": "Chat with id '${message.chatRefId.value}' not found"
             }
             """
 
@@ -79,6 +80,31 @@ internal class MessageRestControllerTest {
                 .content(requestJson)
         )
             .andExpect(MockMvcResultMatchers.status().isNotFound)
+            .andExpect(MockMvcResultMatchers.content().json(expectedResponse, true))
+    }
+
+    @Test
+    fun `create message with blank content`() {
+        val expectedResponse = """
+            {
+            "code": "2",
+            "message": "Message.Content is blank"
+            }
+            """
+
+        every { messageCreation.createMessage(any()) } throws IllegalArgumentException("Message.Content is blank")
+
+        val requestJson = """
+            {
+            "content": ""
+            }
+        """
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/message/" + UUID.randomUUID())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+        )
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
             .andExpect(MockMvcResultMatchers.content().json(expectedResponse, true))
     }
 }

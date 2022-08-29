@@ -6,16 +6,12 @@ import de.kairenken.communicator_backend.application.message.MessageCreation
 import de.kairenken.communicator_backend.application.message.Result
 import de.kairenken.communicator_backend.domain.message.Message
 import de.kairenken.communicator_backend.domain.message.dto.MessageCreationDto
-import de.kairenken.communicator_backend.infrastructure.message.rest.dto.ChatNotFoundDto
+import de.kairenken.communicator_backend.infrastructure.common.ErrorResponseDto
 import de.kairenken.communicator_backend.infrastructure.message.rest.dto.CreateMessageDto
 import de.kairenken.communicator_backend.infrastructure.message.rest.dto.ReadMessageDto
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
@@ -26,10 +22,14 @@ class MessageRestController(private val messageCreation: MessageCreation) {
     fun createMessage(
         @PathVariable(name = "chatRefId") chatRefId: UUID,
         @RequestBody createMessageDto: CreateMessageDto
-    ) = createMessageDto
-        .mapToMessageCreationDto(chatRefId)
-        .createMessage()
-        .wrapInResponse()
+    ) = try {
+        createMessageDto
+            .mapToMessageCreationDto(chatRefId)
+            .createMessage()
+            .wrapInResponse()
+    } catch (e: IllegalArgumentException) {
+        e.wrapInBadRequestResponse()
+    }
 
     private fun CreateMessageDto.mapToMessageCreationDto(chatRefId: UUID) = MessageCreationDto(chatRefId, this.content)
 
@@ -40,8 +40,8 @@ class MessageRestController(private val messageCreation: MessageCreation) {
         is MessageCreated -> this.message.wrapInCreatedResponse()
     }
 
-    private fun Message.ChatRefId.wrapInNotFoundResponse() = ResponseEntity<ChatNotFoundDto>(
-        ChatNotFoundDto("Chat with id '${this.value}' not found"),
+    private fun Message.ChatRefId.wrapInNotFoundResponse() = ResponseEntity<ErrorResponseDto>(
+        ErrorResponseDto("1", "Chat with id '${this.value}' not found"),
         HttpStatus.NOT_FOUND
     )
 
@@ -54,5 +54,10 @@ class MessageRestController(private val messageCreation: MessageCreation) {
         this.id.value,
         this.chatRefId.value,
         this.content.value
+    )
+
+    private fun IllegalArgumentException.wrapInBadRequestResponse() = ResponseEntity<ErrorResponseDto>(
+        ErrorResponseDto("2", this.message),
+        HttpStatus.BAD_REQUEST
     )
 }
