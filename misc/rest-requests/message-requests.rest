@@ -58,8 +58,6 @@ Content-Type: application/json
 > {%
     client.test("Request executed successfully", function() {
         client.assert(response.status === 400, "Response status is not 400");
-        client.assert(response.body.code === "2", "Code is not 2");
-        client.assert(response.body.message === "Invalid JSON", "Message is not 'Invalid JSON'");
     });
 %}
 
@@ -75,8 +73,6 @@ Content-Type: application/json
 > {%
     client.test("Request executed successfully", function() {
         client.assert(response.status === 400, "Response status is not 400");
-        client.assert(response.body.code === "2", "Code is not 2");
-        client.assert(response.body.message === "Message.Content is missing", "Message is not 'Message.Content is missing'");
     });
 %}
 
@@ -92,8 +88,6 @@ Content-Type: application/json
 > {%
     client.test("Request executed successfully", function() {
         client.assert(response.status === 400, "Response status is not 400");
-        client.assert(response.body.code === "2", "Code is not 2");
-        client.assert(response.body.message === "Invalid Chat.Id", "Message is not 'Invalid Chat.Id'");
     });
 %}
 
@@ -108,8 +102,6 @@ Content-Type: application/json
 
 > {%
     client.test("Request executed successfully", function() {
-        client.assert(response.status === 400, "Response status is not 400");
-        client.assert(response.body.code === "2", "Code is not 2");
-        client.assert(response.body.message === "Chat.Id missing", "Message is not 'Chat.Id missing'");
+        client.assert(response.status === 404, "Response status is not 404");
     });
 %}
