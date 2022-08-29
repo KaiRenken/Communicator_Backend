@@ -11,6 +11,10 @@ class MessageRepositoryImpl(private val messageJpaRepository: MessageJpaReposito
         .mapToEntity()
         .save()
 
+    override fun findAllByChatRefId(chatRefId: Message.ChatRefId) = messageJpaRepository
+        .findAllByChatRefId(chatRefId.value)
+        .mapToDomainList()
+
     private fun Message.mapToEntity() = MessageEntity(
         this.id.value,
         this.chatRefId.value,
@@ -19,5 +23,13 @@ class MessageRepositoryImpl(private val messageJpaRepository: MessageJpaReposito
 
     private fun MessageEntity.save() {
         messageJpaRepository.save(this)
+    }
+
+    private fun List<MessageEntity>.mapToDomainList() = this.map {
+        Message(
+            id = Message.Id(it.id),
+            chatRefId = Message.ChatRefId(it.chatRefId),
+            content = Message.Content(it.content)
+        )
     }
 }
