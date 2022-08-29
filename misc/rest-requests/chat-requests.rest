@@ -1,10 +1,58 @@
 ### create new chat
 POST http://localhost:8080/api/chat
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "test-name"
+}
 
 > {%
     client.test("Request executed successfully", function() {
         client.assert(response.status === 201, "Response status is not 201");
+        client.assert(response.body.name === "test-name", "Name is not 'test-name'");
     });
 
     client.global.set("chat-id", response.body.id)
+%}
+
+### create new chat with blank name
+POST http://localhost:8080/api/chat
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": " "
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.code === "2", "Code is not 2");
+        client.assert(response.body.message === "Chat.Name is blank", "Message is not 'Chat.Name is blank'");
+    });
+%}
+
+### create new chat with missing body
+POST http://localhost:8080/api/chat
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+    });
+%}
+
+### create new chat with name missing in body
+POST http://localhost:8080/api/chat
+Accept: application/json
+Content-Type: application/json
+
+{
+  "someOtherKey": "someOtherValue"
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+    });
 %}

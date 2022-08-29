@@ -13,7 +13,7 @@ class ChatRepositoryImpl(private val chatJpaRepository: ChatJpaRepository) : Cha
 
     override fun doesChatExist(id: Chat.Id) = chatJpaRepository.existsById(id.value)
 
-    private fun Chat.mapToEntity() = ChatEntity(this.id.value)
+    private fun Chat.mapToEntity() = ChatEntity(id = this.id.value, name = this.name.value)
 
     private fun ChatEntity.save() {
         chatJpaRepository.save(this)

@@ -3,7 +3,7 @@ package de.kairenken.communicator_backend.application.message
 import de.kairenken.communicator_backend.domain.message.Message
 import de.kairenken.communicator_backend.domain.message.MessageChatRefRepository
 import de.kairenken.communicator_backend.domain.message.MessageRepository
-import de.kairenken.communicator_backend.domain.message.dto.MessageCreationDto
+import de.kairenken.communicator_backend.application.message.dto.MessageCreationDto
 import org.springframework.stereotype.Service
 
 @Service

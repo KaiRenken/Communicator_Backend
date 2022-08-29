@@ -26,5 +26,6 @@ internal class MessageTest {
     fun `create message content with blank content`() {
         assertThatThrownBy { Message.Content("     ") }
             .isExactlyInstanceOf(IllegalArgumentException::class.java)
+            .hasMessage("Message.Content is blank")
     }
 }

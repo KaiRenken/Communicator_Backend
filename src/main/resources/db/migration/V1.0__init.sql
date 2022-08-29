@@ -1,6 +1,7 @@
 create table chat
 (
-    id               uuid PRIMARY KEY
+    id               uuid PRIMARY KEY,
+    name             varchar(1024)                       not null
 );
 
 create table message

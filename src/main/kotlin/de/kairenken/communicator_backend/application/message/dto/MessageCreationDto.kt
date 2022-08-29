@@ -1,4 +1,4 @@
-package de.kairenken.communicator_backend.domain.message.dto
+package de.kairenken.communicator_backend.application.message.dto
 
 import java.util.*
 

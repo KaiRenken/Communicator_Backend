@@ -12,5 +12,8 @@ class ChatEntity(
 
     @Id
     @Column(name = "id", nullable = false)
-    val id: UUID
+    val id: UUID,
+
+    @Column(name = "name", nullable = false)
+    val name: String
 )

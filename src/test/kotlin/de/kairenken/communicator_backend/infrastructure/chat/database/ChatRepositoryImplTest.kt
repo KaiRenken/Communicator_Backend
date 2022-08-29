@@ -11,7 +11,7 @@ internal class ChatRepositoryImplTest : AbstractDatabaseTest() {
 
     @Test
     fun `store chat`() {
-        val chat = Chat()
+        val chat = Chat(name = Chat.Name("test-name"))
 
         chatRepositoryImpl.storeChat(chat)
 
@@ -19,11 +19,12 @@ internal class ChatRepositoryImplTest : AbstractDatabaseTest() {
 
         assertThat(storedChat).isPresent
         assertThat(storedChat.get().id).isEqualTo(chat.id.value)
+        assertThat(storedChat.get().name).isEqualTo(chat.name.value)
     }
 
     @Test
     fun `does chat exist when chat exists`() {
-        val chatEntity = ChatEntity(UUID.randomUUID())
+        val chatEntity = ChatEntity(id = UUID.randomUUID(), name = "test-name")
         chatJpaRepository.save(chatEntity)
 
         Assertions.assertTrue(chatRepositoryImpl.doesChatExist(Chat.Id(chatEntity.id)))

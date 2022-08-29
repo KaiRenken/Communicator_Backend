@@ -12,7 +12,7 @@ internal class MessageChatRefRepositoryImplTest : AbstractDatabaseTest() {
 
     @Test
     fun `chat exists with existing chat`() {
-        val chatEntity = ChatEntity(UUID.randomUUID())
+        val chatEntity = ChatEntity(id = UUID.randomUUID(), name = "test-name")
         chatJpaRepository.save(chatEntity)
 
         assertTrue(messageChatRefRepositoryImpl.chatExists(Message.ChatRefId(chatEntity.id)))

@@ -52,8 +52,6 @@ Content-Type: application/json
 
 ### create new message with missing body
 POST http://localhost:8080/api/message/{{chat-id}}
-Accept: application/json
-Content-Type: application/json
 
 > {%
     client.test("Request executed successfully", function() {

@@ -5,7 +5,7 @@ import de.kairenken.communicator_backend.application.message.MessageCreated
 import de.kairenken.communicator_backend.application.message.MessageCreation
 import de.kairenken.communicator_backend.application.message.Result
 import de.kairenken.communicator_backend.domain.message.Message
-import de.kairenken.communicator_backend.domain.message.dto.MessageCreationDto
+import de.kairenken.communicator_backend.application.message.dto.MessageCreationDto
 import de.kairenken.communicator_backend.infrastructure.common.ErrorResponseDto
 import de.kairenken.communicator_backend.infrastructure.message.rest.dto.CreateMessageDto
 import de.kairenken.communicator_backend.infrastructure.message.rest.dto.ReadMessageDto
