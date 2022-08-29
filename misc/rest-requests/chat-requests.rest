@@ -1,0 +1,10 @@
+### create new chat
+POST http://localhost:8080/api/chat
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+
+    client.global.set("chat-id", response.body.id)
+%}

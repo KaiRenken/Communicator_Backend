@@ -42,12 +42,11 @@ internal class MessageRestControllerTest {
 
         val requestJson = """
             {
-            "chatRefId": "${message.chatRefId.value}",
             "content": "${message.content.value}"
             }
         """
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/api/message")
+            MockMvcRequestBuilders.post("/api/message/${message.chatRefId.value}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
         )
@@ -71,12 +70,11 @@ internal class MessageRestControllerTest {
 
         val requestJson = """
             {
-            "chatRefId": "${message.chatRefId.value}",
             "content": "${message.content.value}"
             }
         """
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/api/message")
+            MockMvcRequestBuilders.post("/api/message/${message.chatRefId.value}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
         )

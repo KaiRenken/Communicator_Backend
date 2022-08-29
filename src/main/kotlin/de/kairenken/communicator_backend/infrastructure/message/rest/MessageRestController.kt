@@ -11,22 +11,27 @@ import de.kairenken.communicator_backend.infrastructure.message.rest.dto.CreateM
 import de.kairenken.communicator_backend.infrastructure.message.rest.dto.ReadMessageDto
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.util.*
 
 @RestController
 @RequestMapping("/api/message")
 class MessageRestController(private val messageCreation: MessageCreation) {
 
-    @PostMapping
-    fun createMessage(@RequestBody createMessageDto: CreateMessageDto) = createMessageDto
-        .mapToMessageCreationDto()
+    @PostMapping("/{chatRefId}")
+    fun createMessage(
+        @PathVariable(name = "chatRefId") chatRefId: UUID,
+        @RequestBody createMessageDto: CreateMessageDto
+    ) = createMessageDto
+        .mapToMessageCreationDto(chatRefId)
         .createMessage()
         .wrapInResponse()
 
-    private fun CreateMessageDto.mapToMessageCreationDto() = MessageCreationDto(this.chatRefId, this.content)
+    private fun CreateMessageDto.mapToMessageCreationDto(chatRefId: UUID) = MessageCreationDto(chatRefId, this.content)
 
     private fun MessageCreationDto.createMessage() = messageCreation.createMessage(this)
 
