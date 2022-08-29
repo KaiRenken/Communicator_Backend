@@ -56,6 +56,7 @@ POST http://localhost:8080/api/message/{{chat-id}}
 > {%
     client.test("Request executed successfully", function() {
         client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.code === "3", "Code is not 3");
     });
 %}
 
@@ -71,6 +72,7 @@ Content-Type: application/json
 > {%
     client.test("Request executed successfully", function() {
         client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.code === "3", "Code is not 3");
     });
 %}
 
@@ -86,20 +88,6 @@ Content-Type: application/json
 > {%
     client.test("Request executed successfully", function() {
         client.assert(response.status === 400, "Response status is not 400");
-    });
-%}
-
-### create new message with missing chat id
-POST http://localhost:8080/api/message/
-Accept: application/json
-Content-Type: application/json
-
-{
-  "content": "test-content"
-}
-
-> {%
-    client.test("Request executed successfully", function() {
-        client.assert(response.status === 404, "Response status is not 404");
+        client.assert(response.body.code === "4", "Code is not 4");
     });
 %}

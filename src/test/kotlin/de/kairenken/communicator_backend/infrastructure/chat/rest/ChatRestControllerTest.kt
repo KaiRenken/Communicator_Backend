@@ -10,8 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 @WebMvcTest(value = [ChatRestController::class])
 internal class ChatRestControllerTest {
@@ -72,5 +71,30 @@ internal class ChatRestControllerTest {
         )
             .andExpect(status().isBadRequest)
             .andExpect(content().json(expectedResponse, true))
+    }
+
+    @Test
+    fun `create chat with missing body`() {
+        mockMvc.perform(
+            post("/api/chat")
+        )
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.code").value("3"))
+    }
+
+    @Test
+    fun `create chat with name missing in body`() {
+        val requestJson = """
+            {
+            "someOtherKey": "someOtherValue"
+            }
+        """
+        mockMvc.perform(
+            post("/api/chat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+        )
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.code").value("3"))
     }
 }

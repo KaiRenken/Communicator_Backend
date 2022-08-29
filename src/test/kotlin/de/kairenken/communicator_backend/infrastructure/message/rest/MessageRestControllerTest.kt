@@ -6,6 +6,7 @@ import de.kairenken.communicator_backend.application.message.MessageCreated
 import de.kairenken.communicator_backend.application.message.MessageCreation
 import de.kairenken.communicator_backend.domain.message.Message
 import io.mockk.every
+import io.mockk.justRun
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -106,5 +107,48 @@ internal class MessageRestControllerTest {
         )
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
             .andExpect(MockMvcResultMatchers.content().json(expectedResponse, true))
+    }
+
+    @Test
+    fun `create message with missing body`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/message/" + UUID.randomUUID())
+        )
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("3"))
+    }
+
+    @Test
+    fun `create message with content missing in body`() {
+        val requestJson = """
+            {
+            "someOtherKey": "someOtherValue"
+            }
+        """
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/message/" + UUID.randomUUID())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+        )
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("3"))
+    }
+
+    @Test
+    fun `create message with invalid chat id`() {
+        val requestJson = """
+            {
+            "content": "test-content"
+            }
+        """
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/message/invalidChatId")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+        )
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("4"))
     }
 }
