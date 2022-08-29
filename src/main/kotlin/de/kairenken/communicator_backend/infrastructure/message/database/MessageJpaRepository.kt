@@ -5,4 +5,4 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface MessageJpaRepository : JpaRepository<UUID, MessageEntity>
+interface MessageJpaRepository : JpaRepository<MessageEntity, UUID>

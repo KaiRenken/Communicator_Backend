@@ -4,6 +4,7 @@ import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
+import javax.persistence.ManyToOne
 import javax.persistence.Table
 
 @Entity
@@ -14,7 +15,7 @@ class MessageEntity(
     @Column(name = "id", nullable = false)
     val id: UUID,
 
-    @Column(name = "chatRefId", nullable = false)
+    @Column(name = "chat_ref_id", nullable = false)
     val chatRefId: UUID,
 
     @Column(name = "content", nullable = false)

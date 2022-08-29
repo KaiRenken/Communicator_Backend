@@ -29,6 +29,15 @@ abstract class AbstractDatabaseTest {
     @Autowired
     protected lateinit var messageJpaRepository: MessageJpaRepository
 
+    @Autowired
+    protected lateinit var chatRepositoryImpl: ChatRepositoryImpl
+
+    @Autowired
+    protected lateinit var messageChatRefRepositoryImpl: MessageChatRefRepositoryImpl
+
+    @Autowired
+    protected lateinit var messageRepositoryImpl: MessageRepositoryImpl
+
     @BeforeEach
     fun setUp() {
         chatJpaRepository.deleteAll()

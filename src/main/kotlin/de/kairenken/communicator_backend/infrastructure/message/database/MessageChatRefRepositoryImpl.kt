@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository
 @Repository
 class MessageChatRefRepositoryImpl(val chatRepository: ChatRepository) : MessageChatRefRepository {
 
-    override fun chatExists(messageChatRefId: Message.ChatRefId): Boolean {
-        return chatRepository.doesChatExist(Chat.Id(messageChatRefId.value))
-    }
+    override fun chatExists(messageChatRefId: Message.ChatRefId) = chatRepository
+        .doesChatExist(Chat.Id(messageChatRefId.value))
 }

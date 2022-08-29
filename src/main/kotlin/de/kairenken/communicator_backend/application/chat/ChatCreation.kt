@@ -7,5 +7,11 @@ import org.springframework.stereotype.Service
 @Service
 class ChatCreation(private val chatRepository: ChatRepository) {
 
-    fun createChat(): Chat = chatRepository.storeChat(Chat())
+    fun createChat() : Chat {
+        val createdChat = Chat()
+
+        chatRepository.storeChat(createdChat)
+
+        return createdChat
+    }
 }

@@ -5,4 +5,4 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface ChatJpaRepository : JpaRepository<UUID, ChatEntity>
+interface ChatJpaRepository : JpaRepository<ChatEntity, UUID>
