@@ -91,3 +91,34 @@ Content-Type: application/json
         client.assert(response.body.code === "4", "Code is not 4");
     });
 %}
+
+### retrieve all messages from chat
+GET http://localhost:8080/api/message/{{chat-id}}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body[0].content === "test-content", "Content is not 'test-content'");
+    });
+%}
+
+### retrieve all messages from chat for non existing chat
+GET http://localhost:8080/api/message/72ce5283-f2f4-4df9-ad71-25d709f0f3d0
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 404, "Response status is not 404");
+        client.assert(response.body.code === "1", "Code is not 1");
+        client.assert(response.body.message === "Chat with id '72ce5283-f2f4-4df9-ad71-25d709f0f3d0' not found", "Message is not 'Chat with id '72ce5283-f2f4-4df9-ad71-25d709f0f3d0' not found'");
+    });
+%}
+
+### retrieve all messages from chat with invalid chat id
+GET http://localhost:8080/api/message/invalidChatId
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.code === "4", "Code is not 4");
+    });
+%}
