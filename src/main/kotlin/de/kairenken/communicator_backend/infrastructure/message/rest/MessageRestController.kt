@@ -2,6 +2,8 @@ package de.kairenken.communicator_backend.infrastructure.message.rest
 
 import de.kairenken.communicator_backend.application.message.MessageCreation
 import de.kairenken.communicator_backend.application.message.MessageCreationResult
+import de.kairenken.communicator_backend.application.message.MessageRetrieval
+import de.kairenken.communicator_backend.application.message.MessageRetrievalResult
 import de.kairenken.communicator_backend.application.message.dto.MessageCreationDto
 import de.kairenken.communicator_backend.domain.message.Message
 import de.kairenken.communicator_backend.infrastructure.common.ErrorResponseDto
@@ -14,10 +16,13 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api/message")
-class MessageRestController(private val messageCreation: MessageCreation) {
+class MessageRestController(
+    private val messageCreation: MessageCreation,
+    private val messageRetrieval: MessageRetrieval
+) {
 
     @PostMapping("/{chatRefId}")
-    fun createMessage(
+    fun postMessage(
         @PathVariable(name = "chatRefId") chatRefId: UUID,
         @RequestBody createMessageDto: CreateMessageDto
     ) = try {
@@ -29,13 +34,23 @@ class MessageRestController(private val messageCreation: MessageCreation) {
         e.wrapInBadRequestResponse()
     }
 
-    private fun CreateMessageDto.mapToMessageCreationDto(chatRefId: UUID) = MessageCreationDto(chatRefId, this.content)
+    @GetMapping("/{chatRefId}")
+    fun getMessagesFromChat(@PathVariable(name = "chatRefId") chatRefId: UUID) = chatRefId
+        .retrieveMessages()
+        .wrapInResponse()
 
     private fun MessageCreationDto.createMessage() = messageCreation.createMessage(this)
+
+    private fun UUID.retrieveMessages() = messageRetrieval.retrieveAllMessagesByChatRefId(Message.ChatRefId(this))
 
     private fun MessageCreationResult.wrapInResponse() = when (this) {
         is MessageCreationResult.Error -> this.chatRefId.wrapInNotFoundResponse()
         is MessageCreationResult.Success -> this.message.wrapInCreatedResponse()
+    }
+
+    private fun MessageRetrievalResult.wrapInResponse() = when (this) {
+        is MessageRetrievalResult.Success -> this.messages.wrapInRetrievalResponse()
+        is MessageRetrievalResult.Error -> this.chatRefId.wrapInNotFoundResponse()
     }
 
     private fun Message.ChatRefId.wrapInNotFoundResponse() = ResponseEntity<ErrorResponseDto>(
@@ -48,14 +63,21 @@ class MessageRestController(private val messageCreation: MessageCreation) {
         HttpStatus.CREATED
     )
 
+    private fun IllegalArgumentException.wrapInBadRequestResponse() = ResponseEntity<ErrorResponseDto>(
+        ErrorResponseDto("2", this.message),
+        HttpStatus.BAD_REQUEST
+    )
+
+    private fun List<Message>.wrapInRetrievalResponse() = ResponseEntity<List<ReadMessageDto>>(
+        this.map { it.mapToReadMessageDto() },
+        HttpStatus.OK
+    )
+
     private fun Message.mapToReadMessageDto() = ReadMessageDto(
         this.id.value,
         this.chatRefId.value,
         this.content.value
     )
 
-    private fun IllegalArgumentException.wrapInBadRequestResponse() = ResponseEntity<ErrorResponseDto>(
-        ErrorResponseDto("2", this.message),
-        HttpStatus.BAD_REQUEST
-    )
+    private fun CreateMessageDto.mapToMessageCreationDto(chatRefId: UUID) = MessageCreationDto(chatRefId, this.content)
 }

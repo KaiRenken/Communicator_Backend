@@ -3,6 +3,8 @@ package de.kairenken.communicator_backend.infrastructure.message.rest
 import com.ninjasquad.springmockk.MockkBean
 import de.kairenken.communicator_backend.application.message.MessageCreation
 import de.kairenken.communicator_backend.application.message.MessageCreationResult
+import de.kairenken.communicator_backend.application.message.MessageRetrieval
+import de.kairenken.communicator_backend.application.message.MessageRetrievalResult
 import de.kairenken.communicator_backend.domain.message.Message
 import io.mockk.every
 import org.junit.jupiter.api.Test
@@ -22,6 +24,9 @@ internal class MessageRestControllerTest {
 
     @MockkBean
     private lateinit var messageCreation: MessageCreation
+
+    @MockkBean
+    private lateinit var messageRetrieval: MessageRetrieval
 
     @Test
     fun `create message successfully`() {
@@ -145,6 +150,71 @@ internal class MessageRestControllerTest {
             MockMvcRequestBuilders.post("/api/message/invalidChatId")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
+        )
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("4"))
+    }
+
+    @Test
+    fun `retrieve messages by chatRefId successfully`() {
+        val chatRefId = Message.ChatRefId(UUID.randomUUID())
+        val message1 = Message(
+            chatRefId = chatRefId,
+            content = Message.Content("test-content-1")
+        )
+        val message2 = Message(
+            chatRefId = chatRefId,
+            content = Message.Content("test-content-2")
+        )
+        val expectedResponse = """
+            [
+              {
+              "id": "${message1.id.value}",
+             "chatRefId": "${message1.chatRefId.value}",
+             "content": "${message1.content.value}"
+              },
+              {
+              "id": "${message2.id.value}",
+              "chatRefId": "${message2.chatRefId.value}",
+              "content": "${message2.content.value}"
+              }
+            ]
+        """
+
+        every { messageRetrieval.retrieveAllMessagesByChatRefId(any()) } returns MessageRetrievalResult.Success(
+            listOf(message1, message2)
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/message/${chatRefId.value}")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json(expectedResponse, true))
+    }
+
+    @Test
+    fun `retrieve messages by chatRefId for non existing chat`() {
+        val chatRefId = Message.ChatRefId(UUID.randomUUID())
+        val expectedResponse = """
+            {
+            "code": "1",
+            "message": "Chat with id '${chatRefId.value}' not found"
+            }
+        """
+
+        every { messageRetrieval.retrieveAllMessagesByChatRefId(any()) } returns MessageRetrievalResult.Error(chatRefId)
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/message/${chatRefId.value}")
+        )
+            .andExpect(MockMvcResultMatchers.status().isNotFound)
+            .andExpect(MockMvcResultMatchers.content().json(expectedResponse, true))
+    }
+
+    @Test
+    fun `retrieve messages by chatRefId with invalid chat id`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/message/invalidChatId")
         )
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("4"))
