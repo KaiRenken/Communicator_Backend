@@ -1,12 +1,10 @@
 package de.kairenken.communicator_backend.infrastructure.message.rest
 
 import com.ninjasquad.springmockk.MockkBean
-import de.kairenken.communicator_backend.application.message.ChatNotFound
-import de.kairenken.communicator_backend.application.message.MessageCreated
 import de.kairenken.communicator_backend.application.message.MessageCreation
+import de.kairenken.communicator_backend.application.message.MessageCreationResult
 import de.kairenken.communicator_backend.domain.message.Message
 import io.mockk.every
-import io.mockk.justRun
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -39,7 +37,7 @@ internal class MessageRestControllerTest {
             }
         """
 
-        every { messageCreation.createMessage(any()) } returns MessageCreated(message)
+        every { messageCreation.createMessage(any()) } returns MessageCreationResult.Success(message)
 
         val requestJson = """
             {
@@ -68,7 +66,7 @@ internal class MessageRestControllerTest {
             }
             """
 
-        every { messageCreation.createMessage(any()) } returns ChatNotFound(message.chatRefId)
+        every { messageCreation.createMessage(any()) } returns MessageCreationResult.Error(message.chatRefId)
 
         val requestJson = """
             {

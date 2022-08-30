@@ -1,9 +1,9 @@
 package de.kairenken.communicator_backend.application.message
 
+import de.kairenken.communicator_backend.application.message.dto.MessageCreationDto
 import de.kairenken.communicator_backend.domain.message.Message
 import de.kairenken.communicator_backend.domain.message.MessageChatRefRepository
 import de.kairenken.communicator_backend.domain.message.MessageRepository
-import de.kairenken.communicator_backend.application.message.dto.MessageCreationDto
 import org.springframework.stereotype.Service
 
 @Service
@@ -16,23 +16,22 @@ class MessageCreation(
         .validateAndCreateMessage()
         .storeMessage()
 
-    private fun MessageCreationDto.validateAndCreateMessage(): Result {
+    private fun MessageCreationDto.validateAndCreateMessage(): MessageCreationResult {
         val chatRefId = Message.ChatRefId(this.chatRefId)
 
-        if (!messageChatRefRepository.chatExists(chatRefId)) {
-            return ChatNotFound(chatRefId)
-        }
-
-        return MessageCreated(
-            Message(
-                chatRefId = chatRefId,
-                content = Message.Content(this.content)
+        when (messageChatRefRepository.chatExists(chatRefId)) {
+            true -> return MessageCreationResult.Success(
+                Message(
+                    chatRefId = chatRefId,
+                    content = Message.Content(this.content)
+                )
             )
-        )
+            false -> return MessageCreationResult.Error(chatRefId)
+        }
     }
 
-    private fun Result.storeMessage(): Result {
-        if (this is MessageCreated) {
+    private fun MessageCreationResult.storeMessage(): MessageCreationResult {
+        if (this is MessageCreationResult.Success) {
             messageRepository.storeMessage(this.message)
         }
 
@@ -40,8 +39,9 @@ class MessageCreation(
     }
 }
 
-sealed class Result
+sealed class MessageCreationResult {
 
-class MessageCreated(val message: Message) : Result()
+    class Success(val message: Message) : MessageCreationResult()
 
-class ChatNotFound(val chatRefId: Message.ChatRefId) : Result()
+    class Error(val chatRefId: Message.ChatRefId) : MessageCreationResult()
+}

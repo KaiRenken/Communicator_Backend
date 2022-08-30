@@ -1,8 +1,8 @@
 package de.kairenken.communicator_backend.application.message
 
+import de.kairenken.communicator_backend.application.message.dto.MessageCreationDto
 import de.kairenken.communicator_backend.domain.message.MessageChatRefRepository
 import de.kairenken.communicator_backend.domain.message.MessageRepository
-import de.kairenken.communicator_backend.application.message.dto.MessageCreationDto
 import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
@@ -16,7 +16,10 @@ internal class MessageCreationTest {
     private val messageRepository = mockk<MessageRepository>()
     private val messageChatRefRepository = mockk<MessageChatRefRepository>()
 
-    private val messageCreation = MessageCreation(messageChatRefRepository, messageRepository)
+    private val messageCreation = MessageCreation(
+        messageChatRefRepository = messageChatRefRepository,
+        messageRepository = messageRepository
+    )
 
     @Test
     fun `create message successfully`() {
@@ -26,10 +29,10 @@ internal class MessageCreationTest {
 
         val createdMessage = messageCreation.createMessage(messageCreationDto)
 
-        assertThat(createdMessage).isInstanceOf(MessageCreated::class.java)
+        assertThat(createdMessage).isInstanceOf(MessageCreationResult.Success::class.java)
         verify { messageRepository.storeMessage(any()) }
         verify { messageChatRefRepository.chatExists(any()) }
-        val messageCreated = createdMessage as MessageCreated
+        val messageCreated = createdMessage as MessageCreationResult.Success
         assertThat(messageCreated.message.chatRefId.value).isEqualTo(messageCreationDto.chatRefId)
         assertThat(messageCreated.message.content.value).isEqualTo(messageCreationDto.content)
     }
@@ -41,8 +44,8 @@ internal class MessageCreationTest {
 
         val result = messageCreation.createMessage(messageCreationDto)
 
-        assertThat(result).isInstanceOf(ChatNotFound::class.java)
-        val chatNotFound = result as ChatNotFound
+        assertThat(result).isInstanceOf(MessageCreationResult.Error::class.java)
+        val chatNotFound = result as MessageCreationResult.Error
         assertThat(chatNotFound.chatRefId.value).isEqualTo(messageCreationDto.chatRefId)
     }
 }

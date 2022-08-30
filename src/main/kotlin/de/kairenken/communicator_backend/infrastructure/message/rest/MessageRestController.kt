@@ -1,11 +1,9 @@
 package de.kairenken.communicator_backend.infrastructure.message.rest
 
-import de.kairenken.communicator_backend.application.message.ChatNotFound
-import de.kairenken.communicator_backend.application.message.MessageCreated
 import de.kairenken.communicator_backend.application.message.MessageCreation
-import de.kairenken.communicator_backend.application.message.Result
-import de.kairenken.communicator_backend.domain.message.Message
+import de.kairenken.communicator_backend.application.message.MessageCreationResult
 import de.kairenken.communicator_backend.application.message.dto.MessageCreationDto
+import de.kairenken.communicator_backend.domain.message.Message
 import de.kairenken.communicator_backend.infrastructure.common.ErrorResponseDto
 import de.kairenken.communicator_backend.infrastructure.message.rest.dto.CreateMessageDto
 import de.kairenken.communicator_backend.infrastructure.message.rest.dto.ReadMessageDto
@@ -35,9 +33,9 @@ class MessageRestController(private val messageCreation: MessageCreation) {
 
     private fun MessageCreationDto.createMessage() = messageCreation.createMessage(this)
 
-    private fun Result.wrapInResponse() = when (this) {
-        is ChatNotFound -> this.chatRefId.wrapInNotFoundResponse()
-        is MessageCreated -> this.message.wrapInCreatedResponse()
+    private fun MessageCreationResult.wrapInResponse() = when (this) {
+        is MessageCreationResult.Error -> this.chatRefId.wrapInNotFoundResponse()
+        is MessageCreationResult.Success -> this.message.wrapInCreatedResponse()
     }
 
     private fun Message.ChatRefId.wrapInNotFoundResponse() = ResponseEntity<ErrorResponseDto>(
