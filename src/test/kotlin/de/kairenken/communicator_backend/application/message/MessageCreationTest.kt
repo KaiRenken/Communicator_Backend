@@ -27,12 +27,12 @@ internal class MessageCreationTest {
         every { messageChatRefRepository.chatExists(any()) } returns true
         justRun { messageRepository.storeMessage(any()) }
 
-        val createdMessage = messageCreation.createMessage(messageCreationDto)
+        val createdMessage = messageCreation.create(messageCreationDto)
 
-        assertThat(createdMessage).isInstanceOf(MessageCreationResult.Success::class.java)
+        assertThat(createdMessage).isInstanceOf(MessageCreation.Success::class.java)
         verify { messageRepository.storeMessage(any()) }
         verify { messageChatRefRepository.chatExists(any()) }
-        val messageCreated = createdMessage as MessageCreationResult.Success
+        val messageCreated = createdMessage as MessageCreation.Success
         assertThat(messageCreated.message.chatRefId.value).isEqualTo(messageCreationDto.chatRefId)
         assertThat(messageCreated.message.content.value).isEqualTo(messageCreationDto.content)
     }
@@ -42,10 +42,10 @@ internal class MessageCreationTest {
         val messageCreationDto = MessageCreationDto(UUID.randomUUID(), "test-message")
         every { messageChatRefRepository.chatExists(any()) } returns false
 
-        val result = messageCreation.createMessage(messageCreationDto)
+        val result = messageCreation.create(messageCreationDto)
 
-        assertThat(result).isInstanceOf(MessageCreationResult.Error::class.java)
-        val chatNotFound = result as MessageCreationResult.Error
+        assertThat(result).isInstanceOf(MessageCreation.Error::class.java)
+        val chatNotFound = result as MessageCreation.Error
         assertThat(chatNotFound.chatRefId.value).isEqualTo(messageCreationDto.chatRefId)
     }
 }

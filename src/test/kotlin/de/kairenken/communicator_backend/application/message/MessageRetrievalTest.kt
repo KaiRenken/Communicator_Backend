@@ -37,8 +37,8 @@ internal class MessageRetrievalTest {
 
         val retrievalResult = messageRetrieval.retrieveAllMessagesByChatRefId(chatRefId)
 
-        assertThat(retrievalResult).isInstanceOf(MessageRetrievalResult.Success::class.java)
-        val retrievedMessages = (retrievalResult as MessageRetrievalResult.Success).messages
+        assertThat(retrievalResult).isInstanceOf(MessageRetrieval.Success::class.java)
+        val retrievedMessages = (retrievalResult as MessageRetrieval.Success).messages
         assertThat(retrievedMessages).hasSize(2)
         assertThat(retrievedMessages).contains(message1)
         assertThat(retrievedMessages).contains(message2)
@@ -51,8 +51,8 @@ internal class MessageRetrievalTest {
 
         val retrievalResult = messageRetrieval.retrieveAllMessagesByChatRefId(chatRefId)
 
-        assertThat(retrievalResult).isInstanceOf(MessageRetrievalResult.Error::class.java)
-        val resultContent = (retrievalResult as MessageRetrievalResult.Error).chatRefId
+        assertThat(retrievalResult).isInstanceOf(MessageRetrieval.Error::class.java)
+        val resultContent = (retrievalResult as MessageRetrieval.Error).chatRefId
         assertThat(resultContent).isEqualTo(chatRefId)
     }
 }

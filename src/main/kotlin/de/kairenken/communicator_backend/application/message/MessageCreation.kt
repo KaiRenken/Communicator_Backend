@@ -11,37 +11,32 @@ class MessageCreation(
     private val messageChatRefRepository: MessageChatRefRepository,
     private val messageRepository: MessageRepository
 ) {
-
-    fun createMessage(messageCreationDto: MessageCreationDto) = messageCreationDto
-        .validateAndCreateMessage()
-        .storeMessage()
-
-    private fun MessageCreationDto.validateAndCreateMessage(): MessageCreationResult {
-        val chatRefId = Message.ChatRefId(this.chatRefId)
-
-        when (messageChatRefRepository.chatExists(chatRefId)) {
-            true -> return MessageCreationResult.Success(
-                Message(
-                    chatRefId = chatRefId,
-                    content = Message.Content(this.content)
-                )
-            )
-            false -> return MessageCreationResult.Error(chatRefId)
+    fun create(messageCreationDto: MessageCreationDto): Result {
+        if (!messageCreationDto.chatExists()) {
+            return Error(Message.ChatRefId(messageCreationDto.chatRefId))
         }
+
+        return messageCreationDto
+            .createMessage()
+            .storeMessage()
+            .wrapInResult()
     }
 
-    private fun MessageCreationResult.storeMessage(): MessageCreationResult {
-        if (this is MessageCreationResult.Success) {
-            messageRepository.storeMessage(this.message)
-        }
+    private fun MessageCreationDto.chatExists() = messageChatRefRepository.chatExists(Message.ChatRefId(this.chatRefId))
 
+    private fun MessageCreationDto.createMessage() = Message(
+        chatRefId = Message.ChatRefId(this.chatRefId),
+        content = Message.Content(this.content)
+    )
+
+    private fun Message.storeMessage(): Message {
+        messageRepository.storeMessage(this)
         return this
     }
-}
 
-sealed class MessageCreationResult {
+    private fun Message.wrapInResult() = Success(this)
 
-    class Success(val message: Message) : MessageCreationResult()
-
-    class Error(val chatRefId: Message.ChatRefId) : MessageCreationResult()
+    sealed class Result
+    class Success(val message: Message) : Result()
+    class Error(val chatRefId: Message.ChatRefId) : Result()
 }

@@ -2,7 +2,7 @@ package de.kairenken.communicator_backend.domain.chat
 
 import java.util.*
 
-class Chat(val id: Id = Id(), val name: Name, val messageIds: List<MessageId> = emptyList()) {
+class Chat(val id: Id = Id(), val name: Name) {
 
     class Id(val value: UUID = UUID.randomUUID())
 
@@ -11,6 +11,4 @@ class Chat(val id: Id = Id(), val name: Name, val messageIds: List<MessageId> = 
             require(value.isNotBlank()) { "Chat.Name is blank" }
         }
     }
-
-    class MessageId(val value: UUID)
 }

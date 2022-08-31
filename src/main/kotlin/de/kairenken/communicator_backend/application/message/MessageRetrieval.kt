@@ -10,19 +10,23 @@ class MessageRetrieval(
     private val messageChatRefRepository: MessageChatRefRepository,
     private val messageRepository: MessageRepository
 ) {
-    fun retrieveAllMessagesByChatRefId(chatRefId: Message.ChatRefId) = chatRefId.retrieveMessagesIfChatExists()
+    fun retrieveAllMessagesByChatRefId(chatRefId: Message.ChatRefId): Result {
+        if (!chatRefId.chatExists()) {
+            return Error(chatRefId)
+        }
 
-    private fun Message.ChatRefId.retrieveMessagesIfChatExists() = when (
-        messageChatRefRepository.chatExists(this)
-    ) {
-        true -> MessageRetrievalResult.Success(messageRepository.findAllByChatRefId(this))
-        false -> MessageRetrievalResult.Error(this)
+        return chatRefId
+            .retrieveMessages()
+            .wrapInResult()
     }
-}
 
-sealed class MessageRetrievalResult {
+    private fun Message.ChatRefId.chatExists() = messageChatRefRepository.chatExists(this)
 
-    class Success(val messages: List<Message>) : MessageRetrievalResult()
+    private fun Message.ChatRefId.retrieveMessages() = messageRepository.findAllByChatRefId(this)
 
-    class Error(val chatRefId: Message.ChatRefId) : MessageRetrievalResult()
+    private fun List<Message>.wrapInResult() = Success(this)
+
+    sealed class Result
+    class Success(val messages: List<Message>) : Result()
+    class Error(val chatRefId: Message.ChatRefId) : Result()
 }

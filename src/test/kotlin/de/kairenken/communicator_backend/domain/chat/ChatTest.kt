@@ -1,13 +1,9 @@
 package de.kairenken.communicator_backend.domain.chat
 
-import de.kairenken.communicator_backend.domain.message.Message
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.DisplayName
-import java.util.UUID
+import java.util.*
 
 internal class ChatTest {
 
@@ -16,7 +12,6 @@ internal class ChatTest {
         val chat = Chat(name = Chat.Name("test-name"))
 
         assertThat(chat.id.value).isInstanceOf(UUID::class.java)
-        assertThat(chat.messageIds).isEmpty()
     }
 
     @Test

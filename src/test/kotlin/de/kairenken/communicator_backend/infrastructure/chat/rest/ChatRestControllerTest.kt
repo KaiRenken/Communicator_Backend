@@ -27,12 +27,11 @@ internal class ChatRestControllerTest {
         val expectedResponse = """
             {
             "id": "${chat.id.value}",
-            "name": "${chat.name.value}",
-            "messageIds": []
+            "name": "${chat.name.value}"
             }
         """
 
-        every { chatCreation.createChat(any()) } returns chat
+        every { chatCreation.create(any()) } returns chat
 
         val requestJson = """
             {
@@ -57,7 +56,7 @@ internal class ChatRestControllerTest {
             }
         """
 
-        every { chatCreation.createChat(any()) } throws IllegalArgumentException("Chat.Name is blank")
+        every { chatCreation.create(any()) } throws IllegalArgumentException("Chat.Name is blank")
 
         val requestJson = """
             {

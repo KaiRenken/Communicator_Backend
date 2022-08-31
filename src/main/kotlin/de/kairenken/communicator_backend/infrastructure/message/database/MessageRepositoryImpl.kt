@@ -11,8 +11,8 @@ class MessageRepositoryImpl(private val messageJpaRepository: MessageJpaReposito
         .mapToEntity()
         .save()
 
-    override fun findAllByChatRefId(chatRefId: Message.ChatRefId) = messageJpaRepository
-        .findAllByChatRefId(chatRefId.value)
+    override fun findAllByChatRefId(chatRefId: Message.ChatRefId) = chatRefId
+        .findMessages()
         .mapToDomainList()
 
     private fun Message.mapToEntity() = MessageEntity(
@@ -24,6 +24,8 @@ class MessageRepositoryImpl(private val messageJpaRepository: MessageJpaReposito
     private fun MessageEntity.save() {
         messageJpaRepository.save(this)
     }
+
+    private fun Message.ChatRefId.findMessages() = messageJpaRepository.findAllByChatRefId(this.value)
 
     private fun List<MessageEntity>.mapToDomainList() = this.map {
         Message(

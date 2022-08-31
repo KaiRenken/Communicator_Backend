@@ -2,9 +2,7 @@ package de.kairenken.communicator_backend.infrastructure.message.rest
 
 import com.ninjasquad.springmockk.MockkBean
 import de.kairenken.communicator_backend.application.message.MessageCreation
-import de.kairenken.communicator_backend.application.message.MessageCreationResult
 import de.kairenken.communicator_backend.application.message.MessageRetrieval
-import de.kairenken.communicator_backend.application.message.MessageRetrievalResult
 import de.kairenken.communicator_backend.domain.message.Message
 import io.mockk.every
 import org.junit.jupiter.api.Test
@@ -42,7 +40,7 @@ internal class MessageRestControllerTest {
             }
         """
 
-        every { messageCreation.createMessage(any()) } returns MessageCreationResult.Success(message)
+        every { messageCreation.create(any()) } returns MessageCreation.Success(message)
 
         val requestJson = """
             {
@@ -71,7 +69,7 @@ internal class MessageRestControllerTest {
             }
             """
 
-        every { messageCreation.createMessage(any()) } returns MessageCreationResult.Error(message.chatRefId)
+        every { messageCreation.create(any()) } returns MessageCreation.Error(message.chatRefId)
 
         val requestJson = """
             {
@@ -96,7 +94,7 @@ internal class MessageRestControllerTest {
             }
             """
 
-        every { messageCreation.createMessage(any()) } throws IllegalArgumentException("Message.Content is blank")
+        every { messageCreation.create(any()) } throws IllegalArgumentException("Message.Content is blank")
 
         val requestJson = """
             {
@@ -181,7 +179,7 @@ internal class MessageRestControllerTest {
             ]
         """
 
-        every { messageRetrieval.retrieveAllMessagesByChatRefId(any()) } returns MessageRetrievalResult.Success(
+        every { messageRetrieval.retrieveAllMessagesByChatRefId(any()) } returns MessageRetrieval.Success(
             listOf(message1, message2)
         )
 
@@ -202,7 +200,7 @@ internal class MessageRestControllerTest {
             }
         """
 
-        every { messageRetrieval.retrieveAllMessagesByChatRefId(any()) } returns MessageRetrievalResult.Error(chatRefId)
+        every { messageRetrieval.retrieveAllMessagesByChatRefId(any()) } returns MessageRetrieval.Error(chatRefId)
 
         mockMvc.perform(
             MockMvcRequestBuilders.get("/api/message/${chatRefId.value}")

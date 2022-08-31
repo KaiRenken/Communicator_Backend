@@ -1,9 +1,7 @@
 package de.kairenken.communicator_backend.infrastructure.message.rest
 
 import de.kairenken.communicator_backend.application.message.MessageCreation
-import de.kairenken.communicator_backend.application.message.MessageCreationResult
 import de.kairenken.communicator_backend.application.message.MessageRetrieval
-import de.kairenken.communicator_backend.application.message.MessageRetrievalResult
 import de.kairenken.communicator_backend.application.message.dto.MessageCreationDto
 import de.kairenken.communicator_backend.domain.message.Message
 import de.kairenken.communicator_backend.infrastructure.common.ErrorResponseDto
@@ -39,18 +37,18 @@ class MessageRestController(
         .retrieveMessages()
         .wrapInResponse()
 
-    private fun MessageCreationDto.createMessage() = messageCreation.createMessage(this)
+    private fun MessageCreationDto.createMessage() = messageCreation.create(this)
 
     private fun UUID.retrieveMessages() = messageRetrieval.retrieveAllMessagesByChatRefId(Message.ChatRefId(this))
 
-    private fun MessageCreationResult.wrapInResponse() = when (this) {
-        is MessageCreationResult.Error -> this.chatRefId.wrapInNotFoundResponse()
-        is MessageCreationResult.Success -> this.message.wrapInCreatedResponse()
+    private fun MessageCreation.Result.wrapInResponse() = when (this) {
+        is MessageCreation.Error -> this.chatRefId.wrapInNotFoundResponse()
+        is MessageCreation.Success -> this.message.wrapInCreatedResponse()
     }
 
-    private fun MessageRetrievalResult.wrapInResponse() = when (this) {
-        is MessageRetrievalResult.Success -> this.messages.wrapInRetrievalResponse()
-        is MessageRetrievalResult.Error -> this.chatRefId.wrapInNotFoundResponse()
+    private fun MessageRetrieval.Result.wrapInResponse() = when (this) {
+        is MessageRetrieval.Success -> this.messages.wrapInRetrievalResponse()
+        is MessageRetrieval.Error -> this.chatRefId.wrapInNotFoundResponse()
     }
 
     private fun Message.ChatRefId.wrapInNotFoundResponse() = ResponseEntity<ErrorResponseDto>(

@@ -8,11 +8,14 @@ import org.springframework.stereotype.Service
 @Service
 class ChatCreation(private val chatRepository: ChatRepository) {
 
-    fun createChat(chatCreationDto: ChatCreationDto) : Chat {
-        val createdChat = Chat(name = Chat.Name(chatCreationDto.name))
+    fun create(chatCreationDto: ChatCreationDto) = chatCreationDto
+        .createChat()
+        .storeAndReturnChat()
 
-        chatRepository.storeChat(createdChat)
+    private fun ChatCreationDto.createChat() = Chat(name = Chat.Name(this.name))
 
-        return createdChat
+    private fun Chat.storeAndReturnChat(): Chat {
+        chatRepository.storeChat(this)
+        return this
     }
 }

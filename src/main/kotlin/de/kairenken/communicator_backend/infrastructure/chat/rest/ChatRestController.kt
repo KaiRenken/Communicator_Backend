@@ -28,14 +28,13 @@ class ChatRestController(private val chatCreation: ChatCreation) {
         e.wrapInBadRequestResponse()
     }
 
-    private fun ChatCreationDto.createChat() = chatCreation.createChat(this)
+    private fun ChatCreationDto.createChat() = chatCreation.create(this)
 
     private fun CreateChatDto.mapToChatCreationDto() = ChatCreationDto(name = this.name)
 
     private fun Chat.mapToReadChatDto() = ReadChatDto(
         id = this.id.value,
-        name = this.name.value,
-        messageIds = this.messageIds.map { it.value }
+        name = this.name.value
     )
 
     private fun ReadChatDto.wrapInResponse() = ResponseEntity<ReadChatDto>(this, HttpStatus.CREATED)
