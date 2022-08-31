@@ -2,6 +2,7 @@ package de.kairenken.communicator_backend.infrastructure.chat.rest
 
 import com.ninjasquad.springmockk.MockkBean
 import de.kairenken.communicator_backend.application.chat.ChatCreation
+import de.kairenken.communicator_backend.application.chat.ChatRetrieval
 import de.kairenken.communicator_backend.domain.chat.Chat
 import io.mockk.every
 import org.junit.jupiter.api.Test
@@ -9,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import java.util.*
 
 @WebMvcTest(value = [ChatRestController::class])
 internal class ChatRestControllerTest {
@@ -20,6 +23,9 @@ internal class ChatRestControllerTest {
 
     @MockkBean
     private lateinit var chatCreation: ChatCreation
+
+    @MockkBean
+    private lateinit var chatRetrieval: ChatRetrieval
 
     @Test
     fun `create chat successfully`() {
@@ -95,5 +101,36 @@ internal class ChatRestControllerTest {
         )
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.code").value("3"))
+    }
+
+    @Test
+    fun `get all chats`() {
+        val chat1 = Chat(
+            id = Chat.Id(UUID.randomUUID()),
+            name = Chat.Name("test-name-1")
+        )
+        val chat2 = Chat(
+            id = Chat.Id(UUID.randomUUID()),
+            name = Chat.Name("test-name-2")
+        )
+        every { chatRetrieval.retrieveAllChats() } returns listOf(chat1, chat2)
+        val expectedResponse = """
+            [
+              {
+              "id": "${chat1.id.value}",
+              "name": "test-name-1"
+              },
+              {
+              "id": "${chat2.id.value}",
+              "name": "test-name-2"
+              }
+            ]
+        """
+
+        mockMvc.perform(
+            get("/api/chat")
+        )
+            .andExpect(status().isOk)
+            .andExpect(content().json(expectedResponse, true))
     }
 }

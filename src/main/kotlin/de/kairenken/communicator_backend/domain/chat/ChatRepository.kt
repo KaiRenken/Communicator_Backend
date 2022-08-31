@@ -4,4 +4,6 @@ interface ChatRepository {
 
     fun storeChat(chat: Chat)
     fun doesChatExist(id: Chat.Id): Boolean
+
+    fun findAllChats(): List<Chat>
 }

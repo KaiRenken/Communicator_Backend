@@ -35,4 +35,17 @@ internal class ChatRepositoryImplTest : AbstractDatabaseTest() {
 
         Assertions.assertFalse(chatRepositoryImpl.doesChatExist(Chat.Id(UUID.randomUUID())))
     }
+
+    @Test
+    fun `find all chats`() {
+        val chatEntity1 = ChatEntity(id = UUID.randomUUID(), name = "test-name-1")
+        val chatEntity2 = ChatEntity(id = UUID.randomUUID(), name = "test-name-2")
+        chatJpaRepository.saveAll(listOf(chatEntity1, chatEntity2))
+
+        val storedChats = chatRepositoryImpl.findAllChats()
+
+        assertThat(storedChats).hasSize(2)
+        assertThat(storedChats.get(0).id.value).isEqualTo(chatEntity1.id)
+        assertThat(storedChats.get(1).id.value).isEqualTo(chatEntity2.id)
+    }
 }

@@ -12,10 +12,20 @@ class ChatRepositoryImpl(private val chatJpaRepository: ChatJpaRepository) : Cha
         .save()
 
     override fun doesChatExist(id: Chat.Id) = chatJpaRepository.existsById(id.value)
+    override fun findAllChats() = chatJpaRepository
+        .findAll()
+        .mapToDomain()
 
     private fun Chat.mapToEntity() = ChatEntity(id = this.id.value, name = this.name.value)
 
     private fun ChatEntity.save() {
         chatJpaRepository.save(this)
+    }
+
+    private fun List<ChatEntity>.mapToDomain() = this.map {
+        Chat(
+            id = Chat.Id(it.id),
+            name = Chat.Name(it.name)
+        )
     }
 }
