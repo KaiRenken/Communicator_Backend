@@ -1,11 +1,11 @@
 package de.kairenken.communicator_backend.application.chat
 
 import de.kairenken.communicator_backend.application.chat.dto.ChatCreationDto
+import de.kairenken.communicator_backend.application.common.UseCase
 import de.kairenken.communicator_backend.domain.chat.Chat
 import de.kairenken.communicator_backend.domain.chat.ChatRepository
-import org.springframework.stereotype.Service
 
-@Service
+@UseCase
 class ChatCreation(private val chatRepository: ChatRepository) {
 
     fun create(chatCreationDto: ChatCreationDto) = chatCreationDto

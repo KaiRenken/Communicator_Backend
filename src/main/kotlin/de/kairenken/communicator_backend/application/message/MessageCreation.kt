@@ -1,12 +1,12 @@
 package de.kairenken.communicator_backend.application.message
 
+import de.kairenken.communicator_backend.application.common.UseCase
 import de.kairenken.communicator_backend.application.message.dto.MessageCreationDto
 import de.kairenken.communicator_backend.domain.message.Message
 import de.kairenken.communicator_backend.domain.message.MessageChatRefRepository
 import de.kairenken.communicator_backend.domain.message.MessageRepository
-import org.springframework.stereotype.Service
 
-@Service
+@UseCase
 class MessageCreation(
     private val messageChatRefRepository: MessageChatRefRepository,
     private val messageRepository: MessageRepository
