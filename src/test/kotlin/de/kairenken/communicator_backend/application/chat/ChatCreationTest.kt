@@ -1,7 +1,7 @@
 package de.kairenken.communicator_backend.application.chat
 
-import de.kairenken.communicator_backend.application.chat.dto.ChatCreationDto
 import de.kairenken.communicator_backend.domain.chat.ChatRepository
+import de.kairenken.communicator_backend.testing.data.ChatCreationDtoTestDataFactory
 import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
@@ -17,13 +17,13 @@ internal class ChatCreationTest {
 
     @Test
     fun `create chat`() {
-        val chatCreationDto = ChatCreationDto(name = "test-name")
+        val chatCreationDto = ChatCreationDtoTestDataFactory.aTestChatCreationDto().build()
         justRun { chatRepository.storeChat(any()) }
 
         val createdChat = chatCreation.create(chatCreationDto)
 
         assertThat(createdChat.id.value).isInstanceOf(UUID::class.java)
-        assertThat(createdChat.name.value).isEqualTo("test-name")
+        assertThat(createdChat.name.value).isEqualTo(chatCreationDto.name)
         verify { chatRepository.storeChat(any()) }
     }
 }

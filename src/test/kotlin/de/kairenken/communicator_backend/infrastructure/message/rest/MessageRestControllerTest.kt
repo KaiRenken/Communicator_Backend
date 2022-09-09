@@ -4,6 +4,7 @@ import com.ninjasquad.springmockk.MockkBean
 import de.kairenken.communicator_backend.application.message.MessageCreation
 import de.kairenken.communicator_backend.application.message.MessageRetrieval
 import de.kairenken.communicator_backend.domain.message.Message
+import de.kairenken.communicator_backend.testing.data.MessageTestDataFactory
 import io.mockk.every
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,10 +29,7 @@ internal class MessageRestControllerTest {
 
     @Test
     fun `create message successfully`() {
-        val message = Message(
-            chatRefId = Message.ChatRefId(UUID.randomUUID()),
-            content = Message.Content("test-content")
-        )
+        val message = MessageTestDataFactory.aTestMessage().build()
         val expectedResponse = """
             {
             "id": "${message.id.value}",
@@ -58,10 +56,7 @@ internal class MessageRestControllerTest {
 
     @Test
     fun `create message for non existing chat`() {
-        val message = Message(
-            chatRefId = Message.ChatRefId(UUID.randomUUID()),
-            content = Message.Content("test-content")
-        )
+        val message = MessageTestDataFactory.aTestMessage().build()
         val expectedResponse = """
             {
             "code": "1",
@@ -155,15 +150,10 @@ internal class MessageRestControllerTest {
 
     @Test
     fun `retrieve messages by chatRefId successfully`() {
-        val chatRefId = Message.ChatRefId(UUID.randomUUID())
-        val message1 = Message(
-            chatRefId = chatRefId,
-            content = Message.Content("test-content-1")
-        )
-        val message2 = Message(
-            chatRefId = chatRefId,
-            content = Message.Content("test-content-2")
-        )
+        val message1 = MessageTestDataFactory.aTestMessage().build()
+        val message2 = MessageTestDataFactory.aTestMessage()
+            .withId(UUID.randomUUID())
+            .build()
         val expectedResponse = """
             [
               {
@@ -184,7 +174,7 @@ internal class MessageRestControllerTest {
         )
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/api/message/${chatRefId.value}")
+            MockMvcRequestBuilders.get("/api/message/${message1.chatRefId.value}")
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.content().json(expectedResponse, true))

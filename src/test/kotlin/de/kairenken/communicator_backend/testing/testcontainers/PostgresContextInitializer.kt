@@ -1,4 +1,4 @@
-package de.kairenken.communicator_backend.testcontainers
+package de.kairenken.communicator_backend.testing.testcontainers
 
 import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer

@@ -1,7 +1,7 @@
 package de.kairenken.communicator_backend.application.chat
 
-import de.kairenken.communicator_backend.domain.chat.Chat
 import de.kairenken.communicator_backend.domain.chat.ChatRepository
+import de.kairenken.communicator_backend.testing.data.ChatTestDataFactory
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -16,14 +16,11 @@ internal class ChatRetrievalTest {
 
     @Test
     fun `retrieve all chats`() {
-        val chat1 = Chat(
-            id = Chat.Id(UUID.randomUUID()),
-            name = Chat.Name("test-name-1")
-        )
-        val chat2 = Chat(
-            id = Chat.Id(UUID.randomUUID()),
-            name = Chat.Name("test-name-2")
-        )
+        val chat1 = ChatTestDataFactory.aTestChat().build()
+        val chat2 = ChatTestDataFactory.aTestChat()
+            .withId(UUID.randomUUID())
+            .withName("test-name-2")
+            .build()
         every { chatRepository.findAllChats() } returns listOf(chat1, chat2)
 
         val retrievedChats = chatRetrieval.retrieveAllChats()

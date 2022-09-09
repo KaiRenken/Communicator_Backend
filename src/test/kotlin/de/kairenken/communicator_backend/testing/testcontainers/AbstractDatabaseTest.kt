@@ -1,4 +1,4 @@
-package de.kairenken.communicator_backend.testcontainers
+package de.kairenken.communicator_backend.testing.testcontainers
 
 import de.kairenken.communicator_backend.infrastructure.chat.database.ChatJpaRepository
 import de.kairenken.communicator_backend.infrastructure.chat.database.ChatRepositoryImpl

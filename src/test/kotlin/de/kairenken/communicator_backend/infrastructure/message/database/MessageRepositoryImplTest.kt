@@ -1,7 +1,9 @@
 package de.kairenken.communicator_backend.infrastructure.message.database
 
 import de.kairenken.communicator_backend.domain.message.Message
-import de.kairenken.communicator_backend.testcontainers.AbstractDatabaseTest
+import de.kairenken.communicator_backend.testing.data.MessageEntityTestDataFactory
+import de.kairenken.communicator_backend.testing.data.MessageTestDataFactory
+import de.kairenken.communicator_backend.testing.testcontainers.AbstractDatabaseTest
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -10,10 +12,7 @@ internal class MessageRepositoryImplTest : AbstractDatabaseTest() {
 
     @Test
     fun `store message`() {
-        val message = Message(
-            chatRefId = Message.ChatRefId(UUID.randomUUID()),
-            content = Message.Content("test-content")
-        )
+        val message = MessageTestDataFactory.aTestMessage().build()
 
         messageRepositoryImpl.storeMessage(message)
 
@@ -27,26 +26,17 @@ internal class MessageRepositoryImplTest : AbstractDatabaseTest() {
 
     @Test
     fun `find all messages by chatrefid`() {
-        val chatRefId1 = UUID.randomUUID()
-        val chatRefId2 = UUID.randomUUID()
-        val messageEntity1 = MessageEntity(
-            id = UUID.randomUUID(),
-            chatRefId = chatRefId1,
-            content = "test-content"
-        )
-        val messageEntity2 = MessageEntity(
-            id = UUID.randomUUID(),
-            chatRefId = chatRefId1,
-            content = "test-content"
-        )
-        val messageEntity3 = MessageEntity(
-            id = UUID.randomUUID(),
-            chatRefId = chatRefId2,
-            content = "test-content"
-        )
+        val messageEntity1 = MessageEntityTestDataFactory.aTestMessageEntity().build()
+        val messageEntity2 = MessageEntityTestDataFactory.aTestMessageEntity()
+            .withId(UUID.randomUUID())
+            .build()
+        val messageEntity3 = MessageEntityTestDataFactory.aTestMessageEntity()
+            .withId(UUID.randomUUID())
+            .withChatRefId(UUID.randomUUID())
+            .build()
         messageJpaRepository.saveAll(listOf(messageEntity1, messageEntity2, messageEntity3))
 
-        val messages = messageRepositoryImpl.findAllByChatRefId(Message.ChatRefId(chatRefId1))
+        val messages = messageRepositoryImpl.findAllByChatRefId(Message.ChatRefId(messageEntity1.chatRefId))
 
         Assertions.assertThat(messages).hasSize(2)
         Assertions.assertThat(messages.get(0).id.value).isEqualTo(messageEntity1.id)

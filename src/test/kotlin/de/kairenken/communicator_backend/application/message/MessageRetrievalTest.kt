@@ -3,6 +3,7 @@ package de.kairenken.communicator_backend.application.message
 import de.kairenken.communicator_backend.domain.message.Message
 import de.kairenken.communicator_backend.domain.message.MessageChatRefRepository
 import de.kairenken.communicator_backend.domain.message.MessageRepository
+import de.kairenken.communicator_backend.testing.data.MessageTestDataFactory
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -21,21 +22,15 @@ internal class MessageRetrievalTest {
 
     @Test
     fun `retrieve messages successfully`() {
-        val chatRefId = Message.ChatRefId(UUID.randomUUID())
-        val message1 = Message(
-            id = Message.Id(UUID.randomUUID()),
-            chatRefId = chatRefId,
-            content = Message.Content("test-content-1")
-        )
-        val message2 = Message(
-            id = Message.Id(UUID.randomUUID()),
-            chatRefId = chatRefId,
-            content = Message.Content("test-content-2")
-        )
-        every { messageChatRefRepository.chatExists(chatRefId) } returns true
-        every { messageRepository.findAllByChatRefId(chatRefId) } returns listOf(message1, message2)
+        val message1 = MessageTestDataFactory.aTestMessage().build()
+        val message2 = MessageTestDataFactory.aTestMessage()
+            .withId(UUID.randomUUID())
+            .withContent("test-content-2")
+            .build()
+        every { messageChatRefRepository.chatExists(message1.chatRefId) } returns true
+        every { messageRepository.findAllByChatRefId(message1.chatRefId) } returns listOf(message1, message2)
 
-        val retrievalResult = messageRetrieval.retrieveAllMessagesByChatRefId(chatRefId)
+        val retrievalResult = messageRetrieval.retrieveAllMessagesByChatRefId(message1.chatRefId)
 
         assertThat(retrievalResult).isInstanceOf(MessageRetrieval.Success::class.java)
         val retrievedMessages = (retrievalResult as MessageRetrieval.Success).messages

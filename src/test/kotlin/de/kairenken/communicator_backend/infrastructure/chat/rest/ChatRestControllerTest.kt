@@ -3,7 +3,7 @@ package de.kairenken.communicator_backend.infrastructure.chat.rest
 import com.ninjasquad.springmockk.MockkBean
 import de.kairenken.communicator_backend.application.chat.ChatCreation
 import de.kairenken.communicator_backend.application.chat.ChatRetrieval
-import de.kairenken.communicator_backend.domain.chat.Chat
+import de.kairenken.communicator_backend.testing.data.ChatTestDataFactory
 import io.mockk.every
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,7 +29,7 @@ internal class ChatRestControllerTest {
 
     @Test
     fun `create chat successfully`() {
-        val chat = Chat(name = Chat.Name("test-name"))
+        val chat = ChatTestDataFactory.aTestChat().build()
         val expectedResponse = """
             {
             "id": "${chat.id.value}",
@@ -105,24 +105,21 @@ internal class ChatRestControllerTest {
 
     @Test
     fun `get all chats`() {
-        val chat1 = Chat(
-            id = Chat.Id(UUID.randomUUID()),
-            name = Chat.Name("test-name-1")
-        )
-        val chat2 = Chat(
-            id = Chat.Id(UUID.randomUUID()),
-            name = Chat.Name("test-name-2")
-        )
+        val chat1 = ChatTestDataFactory.aTestChat().build()
+        val chat2 = ChatTestDataFactory.aTestChat()
+            .withId(UUID.randomUUID())
+            .withName("test-name-2")
+            .build()
         every { chatRetrieval.retrieveAllChats() } returns listOf(chat1, chat2)
         val expectedResponse = """
             [
               {
               "id": "${chat1.id.value}",
-              "name": "test-name-1"
+              "name": "${chat1.name.value}"
               },
               {
               "id": "${chat2.id.value}",
-              "name": "test-name-2"
+              "name": "${chat2.name.value}"
               }
             ]
         """

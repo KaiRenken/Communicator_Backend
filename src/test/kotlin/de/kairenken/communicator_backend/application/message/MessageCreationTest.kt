@@ -1,15 +1,14 @@
 package de.kairenken.communicator_backend.application.message
 
-import de.kairenken.communicator_backend.application.message.dto.MessageCreationDto
 import de.kairenken.communicator_backend.domain.message.MessageChatRefRepository
 import de.kairenken.communicator_backend.domain.message.MessageRepository
+import de.kairenken.communicator_backend.testing.data.MessageCreationDtoTestDataFactory
 import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.util.*
 
 internal class MessageCreationTest {
 
@@ -23,7 +22,7 @@ internal class MessageCreationTest {
 
     @Test
     fun `create message successfully`() {
-        val messageCreationDto = MessageCreationDto(UUID.randomUUID(), "test-message")
+        val messageCreationDto = MessageCreationDtoTestDataFactory.aTestMessageCreationDto().build()
         every { messageChatRefRepository.chatExists(any()) } returns true
         justRun { messageRepository.storeMessage(any()) }
 
@@ -39,7 +38,7 @@ internal class MessageCreationTest {
 
     @Test
     fun `create message to non existing chat`() {
-        val messageCreationDto = MessageCreationDto(UUID.randomUUID(), "test-message")
+        val messageCreationDto = MessageCreationDtoTestDataFactory.aTestMessageCreationDto().build()
         every { messageChatRefRepository.chatExists(any()) } returns false
 
         val result = messageCreation.create(messageCreationDto)
